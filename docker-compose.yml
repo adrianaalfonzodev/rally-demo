@@ -1,0 +1,42 @@
+#version: '3.8'
+
+services:
+  app:
+    build: .
+    image: erp_rally_app
+    container_name: erp_rally_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - node_modules:/var/www/node_modules
+    ports:
+      - "8000:8000"
+      - "5080:5173"
+    command: ["npm", "run", "dev:all"]
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=erp_rally
+      - DB_USERNAME=erp_user
+      - DB_PASSWORD=ErpR@lly2025!
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: erp_rally_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: erp_rally
+      MYSQL_USER: erp_user
+      MYSQL_PASSWORD: ErpR@lly2025!
+      MYSQL_ROOT_PASSWORD: RootR@lly2025!
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+  node_modules:
