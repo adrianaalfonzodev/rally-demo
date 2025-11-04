@@ -10,9 +10,8 @@
 
         <!-- Scripts -->
         @routes
-    @viteReactRefresh
-    <script type="module" src="{{ asset('build/assets/app.js') }}"></script>
-    <script type="module" src="{{ asset('build/assets/' . $page['component'] . '.js') }}"></script>
+        @viteReactRefresh
+        @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
