@@ -1,37 +1,40 @@
-import { defineConfig } from 'vite'
-import laravel from 'laravel-vite-plugin'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  // Base public path used to reference built assets. Set ASSET_BASE when building
-  // to emit URLs under a subpath, e.g. ASSET_BASE='/erp/build/' will produce
-  // references like '/erp/build/assets/your-file.js' in the manifest.
-  base: process.env.ASSET_BASE || '/',
+  // Base path para producción, usa ASSET_BASE si está definido en .env
+  base: process.env.ASSET_BASE || '/build/',
+
   plugins: [
     laravel({
-      input: 'resources/js/app.tsx',
-      refresh: true
+      input: ['resources/js/app.tsx'], // tu entry point principal
+      refresh: true, // hot reload para dev
     }),
-    react()
+    react(),
   ],
+
   build: {
-    outDir: 'public/build'
+    outDir: 'public/build', // donde se construyen los assets
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // asegura que los assets se pongan en /build/assets
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
+    },
   },
+
   server: {
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    origin: 'http://localhost:5173',
-    cors: true,
     hmr: {
       host: 'localhost',
       port: 5173,
-      // port: 5080
-      protocol: 'ws'
+      protocol: 'ws',
     },
-    watch: {
-      usePolling: true,
-      interval: 100
-    }
-  }
-})
+  },
+});
