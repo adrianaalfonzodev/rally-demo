@@ -14,7 +14,7 @@ export default function Page({ role }: { role: Role }) {
 
   return (
     <Authenticated title={role ? 'Editar Rol' : 'Crear rol de usuario'}>
-      <div className="py-8">
+      <div className="py-4">
         <div>
           <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
             <Form form={form} />

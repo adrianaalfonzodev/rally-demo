@@ -13,7 +13,7 @@ export default function Authenticated({
 }: PropsWithChildren<{ header?: ReactNode; title?: string }>) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const user = usePage().props.auth?.user;
-
+    
     return (
         <div className="min-h-screen bg-[#fafafa]">
             <NotificationContainer />

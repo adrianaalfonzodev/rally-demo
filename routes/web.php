@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AgentsController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
@@ -7,6 +9,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\InvoicesController;
+use App\Http\Controllers\ProvidersController;
 use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
@@ -35,15 +39,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
     Route::name('administration.')->prefix('administration')->group(function () {
         Route::resource('roles', RolesController::class)->names('roles');
         Route::resource('users', UserController::class)->names('users');
+        Route::resource('customers', CustomerController::class)->names('customers');
+        Route::resource('providers', ProvidersController::class)->names('providers');
     });
 
     Route::name('inventory.')->prefix('inventory')->group(function () {
         // Inventory related routes can be added here
         Route::resource('products', ProductsController::class)->names('products');
+    });
+
+    Route::name('billing.')->prefix('billing')->group(function () {
+        // Billing related routes can be added here
+        Route::resource('invoices', InvoicesController::class)->names('invoices');
     });
 
 });

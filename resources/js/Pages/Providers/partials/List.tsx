@@ -1,29 +1,32 @@
 import Table from '@/Components/Table'
 import { Link, useForm } from '@inertiajs/react'
-import { Role } from '@/types/roles'
-import React from 'react'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { Agent } from '@/types/agent'
 import notification from '@/utils/notification'
 
-export default function List({ roles = [] }: { roles: Role[] }) {
+export default function List({ agents = [] }: { agents: Agent[] }) {
   const { post } = useForm({
     _method: 'delete'
   })
 
   const headers = [
     { name: 'ID', key: 'id' },
-    { name: 'Nombre', key: 'name' },
-    { name: 'Descripción', key: 'description' },
-    { name: 'Estado', key: 'is_active' }
+    { name: 'Cedula o RIF', key: 'id_number' },
+    { name: 'Nombre', key: 'fullname' },
+    { name: 'Correo', key: 'email' },
+    { name: 'Teléfono', key: 'phone' },
+    { name: 'Estado', key: 'is_active' },
+    { name: 'Creado', key: 'created_at' },
+    { name: 'Actualizado', key: 'updated_at' }
   ]
 
   const deleteData = (dataId: number) => {
     notification.confirm(
-      `¿Estás seguro de que deseas eliminar el rol ${dataId}? Esta acción no se puede deshacer.`,
+      `¿Estás seguro de que deseas eliminar el proveedor ${dataId}? Esta acción no se puede deshacer.`,
       () => {
-        post(route('administration.roles.destroy', dataId), {
-          onSuccess: () => notification.success('Rol eliminado correctamente'),
-          onError: () => notification.error('Error al eliminar el rol')
+        post(route('administration.providers.destroy', dataId), {
+          onSuccess: () =>
+            notification.success('Proveedor eliminado correctamente'),
+          onError: () => notification.error('Error al eliminar el proveedor')
         })
       }
     )
@@ -32,17 +35,15 @@ export default function List({ roles = [] }: { roles: Role[] }) {
   /**
    * Render actions for a role
    *
-   * @param data Role
+   * @param role Role
    * @returns  React.ReactNode
    */
-  const renderActions = (data: Role) => {
+  const renderActions = (data: Agent) => {
     if (!data) return null
-    if (data.name.toLowerCase().includes('admin'))
-      return <span className="text-gray-500">Sin acciones</span>
     return (
       <div className="flex space-x-4">
         <Link
-          href={route('administration.roles.edit', data.id)}
+          href={route('administration.providers.edit', data.id)}
           className="text-blue-600 hover:underline"
         >
           Editar
@@ -64,9 +65,9 @@ export default function List({ roles = [] }: { roles: Role[] }) {
         <div className="p-3 bg-white border-b border-gray-200">
           <Table
             headers={headers}
-            data={roles}
+            data={agents}
             renderActions={renderActions}
-            path={'administration.roles.create'}
+            path={'administration.providers.create'}
           />
         </div>
       </div>

@@ -29,7 +29,7 @@ export default function Page({
 
   return (
     <Authenticated title={user ? 'Editar Usuario' : 'Crear Usuario'}>
-      <div className="py-8">
+      <div className="py-4">
         <div>
           <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
             <Form

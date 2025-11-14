@@ -20,9 +20,10 @@ class RolesSeeder extends Seeder
                 'description' => 'Acceso total al sistema',
                 'permissions' => json_encode(['all' => true]),
                 'is_active' => true,
+                'is_system' => true,
             ],
             [
-                'name' => 'User',
+                'name' => 'Usuario',
                 'description' => 'Usuario regular con acceso limitado',
                 'permissions' => json_encode(['users' => [
                     'view' => true,
@@ -30,11 +31,12 @@ class RolesSeeder extends Seeder
                     'update' => false,
                 ]]),
                 'is_active' => true,
-            ],
+                'is_system' => true,
+            ]
         ];
 
         foreach ($roles as $role) {
-            roles::updateOrCreate(
+            Roles::updateOrCreate(
                 ['name' => $role['name']],
                 $role
             );

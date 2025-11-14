@@ -1,15 +1,17 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
-import axios from 'axios'
+import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import {
-  MagnifyingGlassIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  BellIcon
 } from '@heroicons/react/24/outline'
+import { Link } from '@inertiajs/react'
+import { usePage } from '@inertiajs/react'
+import Dropdown from './Dropdown'
 
 type Props = {
   onToggleSidebar?: () => void
   title?: string
   user?: {
-    name?: string
+    FullName?: string
     email?: string
   }
   onLogout?: () => void
@@ -21,6 +23,7 @@ const Topbar: FunctionComponent<Props> = ({
   user,
   onLogout
 }) => {
+  const { urlAsset } = usePage().props
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -45,7 +48,7 @@ const Topbar: FunctionComponent<Props> = ({
   return (
     <div>
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           <div className="flex items-center">
             {title && (
               <div className="hidden sm:block">
@@ -58,8 +61,8 @@ const Topbar: FunctionComponent<Props> = ({
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="hidden sm:block">
-                {/* <div className="flex items-center px-3 py-1 bg-white rounded-lg shadow">
+              {/* <div className="hidden sm:block">
+                <div className="flex items-center px-3 py-1 bg-white rounded-lg shadow">
                   <MagnifyingGlassIcon
                     className="h-5 w-5 text-gray-400"
                     aria-hidden="true"
@@ -68,8 +71,31 @@ const Topbar: FunctionComponent<Props> = ({
                     className="ms-2 w-64 bg-transparent text-sm placeholder-gray-400 border-0 focus:outline-none focus:ring-0 focus:border-transparent"
                     placeholder="Search..."
                   />
-                </div> */}
-              </div>
+                </div>
+              </div> */}
+
+              <Dropdown>
+                <Dropdown.Trigger>
+                  <button
+                    type="button"
+                    className="flex items-center bg-white rounded-lg shadow px-3 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2731A] h-8"
+                  >
+                    <BellIcon className="w-5 h-5" />
+                  </button>
+                </Dropdown.Trigger>
+
+                <Dropdown.Content
+                  align="right"
+                  width="48"
+                  contentClasses="p-3 bg-white"
+                >
+                  <div className="py-1">
+                    <span className="text-sm">
+                      Esta función está en desarrollo
+                    </span>
+                  </div>
+                </Dropdown.Content>
+              </Dropdown>
               <div
                 className="relative"
                 ref={ref}
@@ -77,14 +103,14 @@ const Topbar: FunctionComponent<Props> = ({
                 <button
                   type="button"
                   onClick={() => setOpen((s) => !s)}
-                  className="flex items-center bg-white rounded-lg shadow px-3 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2731A]"
+                  className="flex items-center bg-white rounded-lg shadow px-3 py-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F2731A] h-8"
                 >
                   <div className="flex items-center">
                     <div
-                      className="h-8 w-8 rounded-full bg-gray-200"
+                      className="h-6 w-6 rounded-full bg-gray-200"
                       style={{
                         background:
-                          'url(/images/Portrait_Placeholder.png) no-repeat center center',
+                          `url(${urlAsset}/images/Portrait_Placeholder.png) no-repeat center center`,
                         backgroundSize: 'cover'
                       }}
                     />
@@ -100,47 +126,17 @@ const Topbar: FunctionComponent<Props> = ({
                     <div className="py-1">
                       <div className="px-4 py-2">
                         <div className="text-sm font-medium text-gray-800">
-                          {user?.name ?? 'Usuario'}
+                          {user?.FullName ?? 'Usuario'}
                         </div>
                         <div className="text-xs text-gray-500">
                           {user?.email ?? 'admin@erp.test'}
                         </div>
                       </div>
-                      {/* <button
-                        type="button"
-                        onClick={() => {
-                          setOpen(false)
-                          // Aquí puede navegar al perfil si es necesario
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Ver perfil
-                      </button> */}
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          setOpen(false)
-                          if (onLogout) {
-                            try {
-                              await onLogout()
-                            } catch (e) {
-                              console.error('onLogout handler failed', e)
-                            }
-                            return
-                          }
-
-                          try {
-                            await axios.post('/logout')
-                            window.location.href = '/login'
-                          } catch (e) {
-                            console.error('Logout failed', e)
-                            window.location.reload()
-                          }
-                        }}
+                      <Link href={route('logout')} method="post" as="button"
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Cerrar sesión
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 )}

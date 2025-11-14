@@ -1,29 +1,36 @@
 import Table from '@/Components/Table'
 import { Link, useForm } from '@inertiajs/react'
-import { Role } from '@/types/roles'
+import { User } from '@/types/users'
 import React from 'react'
-import { PlusIcon } from '@heroicons/react/24/outline'
 import notification from '@/utils/notification'
+import { PlusIcon } from '@heroicons/react/24/outline'
 
-export default function List({ roles = [] }: { roles: Role[] }) {
+export default function List({ invoices = [] }: { invoices: any[] }) {
   const { post } = useForm({
     _method: 'delete'
   })
 
   const headers = [
     { name: 'ID', key: 'id' },
-    { name: 'Nombre', key: 'name' },
-    { name: 'Descripción', key: 'description' },
-    { name: 'Estado', key: 'is_active' }
+    { name: 'Nro Factura', key: 'number' },
+    { name: 'Fecha Factura', key: 'datetime' },
+    { name: 'Rif Cliente', key: 'id_number' },
+    { name: 'Nombre Cliente', key: 'customer_name' },
+    { name: 'Cantidad Items', key: 'items_count' },
+    // { name: 'Subtotal', key: 'subtotal' },
+    { name: 'Total', key: 'total' },
+    { name: 'Creado Por', key: 'created_by' },
+    { name: 'Fecha de Creación', key: 'created_at' },
   ]
 
   const deleteData = (dataId: number) => {
     notification.confirm(
-      `¿Estás seguro de que deseas eliminar el rol ${dataId}? Esta acción no se puede deshacer.`,
+      `¿Estás seguro de que deseas eliminar la factura ${dataId}? Esta acción no se puede deshacer.`,
       () => {
-        post(route('administration.roles.destroy', dataId), {
-          onSuccess: () => notification.success('Rol eliminado correctamente'),
-          onError: () => notification.error('Error al eliminar el rol')
+        post(route('billing.invoices.destroy', dataId), {
+          onSuccess: () =>
+            notification.success('Factura eliminada correctamente'),
+          onError: () => notification.error('Error al eliminar la factura')
         })
       }
     )
@@ -32,17 +39,15 @@ export default function List({ roles = [] }: { roles: Role[] }) {
   /**
    * Render actions for a role
    *
-   * @param data Role
+   * @param role Role
    * @returns  React.ReactNode
    */
-  const renderActions = (data: Role) => {
+  const renderActions = (data: any) => {
     if (!data) return null
-    if (data.name.toLowerCase().includes('admin'))
-      return <span className="text-gray-500">Sin acciones</span>
     return (
       <div className="flex space-x-4">
         <Link
-          href={route('administration.roles.edit', data.id)}
+          href={route('billing.invoices.edit', data.id)}
           className="text-blue-600 hover:underline"
         >
           Editar
@@ -64,9 +69,9 @@ export default function List({ roles = [] }: { roles: Role[] }) {
         <div className="p-3 bg-white border-b border-gray-200">
           <Table
             headers={headers}
-            data={roles}
+            data={invoices}
             renderActions={renderActions}
-            path={'administration.roles.create'}
+            path={'billing.invoices.create'}
           />
         </div>
       </div>

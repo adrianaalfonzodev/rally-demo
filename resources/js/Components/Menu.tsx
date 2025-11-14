@@ -2,10 +2,11 @@ import {
   ChartBarIcon,
   ShieldCheckIcon,
   UserCircleIcon,
-  CircleStackIcon
+  CircleStackIcon,
+  DocumentCurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 
-export type MenuItem = { name: string; routeName: string }
+export type MenuItem = { name: string; routeName: string, query?: string }
 export type MenuSection = { name: string; items: MenuItem[] }
 export type MenuIcons = { [key: string]: JSX.Element }
 
@@ -19,13 +20,21 @@ export const Menu: MenuSection[] = [
       name: 'Administración',
       items: [
         { name: 'Roles', routeName: 'administration.roles.index' },
-        { name: 'Usuarios', routeName: 'administration.users.index' }
+        { name: 'Usuarios', routeName: 'administration.users.index' },
+        { name: 'Clientes', routeName: 'administration.customers.index' },
+        { name: 'Proveedores', routeName: 'administration.providers.index'}
       ]
     },
     {
       name: 'Inventario',
       items: [
         { name: 'Productos', routeName: 'inventory.products.index' }
+      ]
+    },
+    {
+      name: 'Facturación',
+      items: [
+        { name: 'Facturas', routeName: 'billing.invoices.index' }
       ]
     },
     {
@@ -58,5 +67,11 @@ export const Icons: MenuIcons = {
         className="h-5 w-5 flex-shrink-0"
         aria-hidden
       />
-    )
+    ),
+    'Facturación': (
+      <DocumentCurrencyDollarIcon
+        className="h-5 w-5 flex-shrink-0"
+        aria-hidden
+      />
+    ),
 }

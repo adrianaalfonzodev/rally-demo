@@ -7,6 +7,12 @@ import { Transition } from '@headlessui/react'
 import React from 'react'
 import notification from '@/utils/notification'
 import { Role } from '@/types/roles'
+import Dropdown from '@/Components/Dropdown'
+import {
+  ChevronDownIcon,
+  QuestionMarkCircleIcon
+} from '@heroicons/react/24/outline'
+import Popover from '../../../Components/Popover'
 
 export default function Form({
   form,
@@ -49,15 +55,74 @@ export default function Form({
 
   return (
     <div>
-      <header>
-        <h2 className="text-lg font-medium text-gray-900">
-          Configuración de usuario
-        </h2>
+      <header className="flex justify-between">
+        <div>
+          <h2 className="text-lg font-medium text-gray-900">
+            Configuración de usuario
+          </h2>
 
-        <p className="mt-1 text-sm text-gray-600">
-          Modifica los detalles del usuario, incluyendo nombre, descripción y
-          rol.
-        </p>
+          <p className="mt-1 text-sm text-gray-600">
+            Modifica los detalles del usuario, incluyendo nombre, descripción y
+            rol.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center">
+            <InputLabel value="Estado" />
+            <Popover
+              trigger={<QuestionMarkCircleIcon className="h-4 w-4" />}
+              triggerClassName="inline-flex ml-1 items-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none"
+              panelClassName="py-2 bg-white"
+              align="right"
+              triggerOnHover={true}
+            >
+              <div className="px-4 py-2 text-sm text-gray-700">
+                <p className="text-xs">
+                  Si el usuario está activo, podrá iniciar sesión en el sistema.
+                </p>
+              </div>
+            </Popover>
+          </div>
+          <Dropdown>
+            <Dropdown.Trigger>
+              <button
+                type="button"
+                className={`inline-flex items-center rounded-md border px-3 py-1 text-sm font-medium focus:outline-none ${
+                  {
+                    true: 'bg-green-600 text-white border-green-600 hover:bg-green-700',
+                    false: 'bg-white text-gray-700 hover:bg-gray-50'
+                  }[String(!!data.is_active)]
+                }`}
+              >
+                {data.is_active ? 'Activo' : 'Inactivo'}
+                <ChevronDownIcon className="ml-2 h-3 w-3" />
+              </button>
+            </Dropdown.Trigger>
+
+            <Dropdown.Content
+              align="right"
+              width="48"
+              contentClasses="py-1 bg-white"
+            >
+              <div className="py-1">
+                <button
+                  type="button"
+                  className="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setData('is_active', true)}
+                >
+                  Activo
+                </button>
+                <button
+                  type="button"
+                  className="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setData('is_active', false)}
+                >
+                  Inactivo
+                </button>
+              </div>
+            </Dropdown.Content>
+          </Dropdown>
+        </div>
       </header>
       <form
         className="mt-6"
@@ -110,7 +175,7 @@ export default function Form({
               value="Correo electrónico"
             />
             <TextInput
-              className='w-full'
+              className="w-full"
               id="email"
               name="email"
               defaultValue={data.email ? data.email : ''}
@@ -130,7 +195,7 @@ export default function Form({
               value="Nombre"
             />
             <TextInput
-              className='w-full'
+              className="w-full"
               id="name"
               name="name"
               defaultValue={data.name ? data.name : ''}
@@ -151,7 +216,7 @@ export default function Form({
               value="Apellido"
             />
             <TextInput
-              className='w-full'
+              className="w-full"
               id="last_name"
               name="last_name"
               defaultValue={data.last_name ? data.last_name : ''}
@@ -171,7 +236,7 @@ export default function Form({
               value="Contraseña"
             />
             <TextInput
-              className='w-full'
+              className="w-full"
               id="password"
               name="password"
               type="password"
@@ -191,7 +256,7 @@ export default function Form({
               value="Confirmar contraseña"
             />
             <TextInput
-              className='w-full'
+              className="w-full"
               id="password_confirmation"
               name="password_confirmation"
               type="password"
@@ -206,18 +271,6 @@ export default function Form({
               message={errors.password_confirmation}
             />
           </div>
-        </div>
-
-        <div className="mt-4">
-          <label className="flex items-center space-x-3">
-            <Checkbox
-              id="is_active"
-              name="is_active"
-              defaultChecked={data.is_active}
-              onChange={(event) => setData('is_active', event.target.checked)}
-            />
-            <span className="text-sm text-gray-700">¿Está activo?</span>
-          </label>
         </div>
 
         <div className="flex items-center gap-4 mt-6">

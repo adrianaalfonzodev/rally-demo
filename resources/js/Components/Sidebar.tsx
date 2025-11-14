@@ -104,9 +104,10 @@ const Sidebar: FunctionComponent = () => {
               try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const candidate = (route as any)(item.routeName)
-                if (candidate) href = candidate
+                const query = item.query ? `${item.query}` : ''
+                if (candidate) href = candidate + query
                 try {
-                  active = route().current(item.routeName)
+                  active = route().current(item.routeName + (item.query ? `?${item.query}` : ''))
                 } catch (e) {
                   active = false
                 }
@@ -114,7 +115,7 @@ const Sidebar: FunctionComponent = () => {
                 href = '#'
                 active = false
               }
-
+              
               const baseVertical =
                 'block rounded-md px-3 py-2 font-medium transition duration-150 ease-in-out focus:outline-none text-sm'
               const activeClass = 'bg-[EEEEEE] text-[#333333]'
@@ -133,7 +134,7 @@ const Sidebar: FunctionComponent = () => {
                   className="py-1"
                 >
                   {!href || href === '#' ? (
-                    <a
+                    <Link
                       href={href}
                       className={classNames}
                       onClick={(e: any) => {
@@ -144,7 +145,7 @@ const Sidebar: FunctionComponent = () => {
                         {sectionIcons[section.name]}
                         <span>{item.name}</span>
                       </span>
-                    </a>
+                    </Link>
                   ) : (
                     <Link
                       href={href}
@@ -204,9 +205,10 @@ const Sidebar: FunctionComponent = () => {
                     try {
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const candidate = (route as any)(item.routeName)
-                      if (candidate) href = candidate
+                      const query = item.query ? `?${item.query}` : ''
+                      if (candidate) href = candidate + query
                       try {
-                        active = route().current(item.routeName)
+                        active = route().current(item.routeName + (item.query ? `?${item.query}` : ''))
                       } catch (e) {
                         active = false
                       }
@@ -227,7 +229,7 @@ const Sidebar: FunctionComponent = () => {
                       'ms-2'
 
                     return !href || href === '#' ? (
-                      <a
+                      <Link
                         key={item.name}
                         href={href}
                         className={classNames}
@@ -236,7 +238,7 @@ const Sidebar: FunctionComponent = () => {
                         }}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ) : (
                       <Link
                         key={item.name}

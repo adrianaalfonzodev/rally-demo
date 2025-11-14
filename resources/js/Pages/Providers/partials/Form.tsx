@@ -6,23 +6,22 @@ import PrimaryButton from '@/Components/PrimaryButton'
 import { Transition } from '@headlessui/react'
 import React from 'react'
 import notification from '@/utils/notification'
-import { Menu } from '@/Components/Menu'
-import Popover from '@/Components/Popover'
+import { Role } from '@/types/roles'
+import Dropdown from '@/Components/Dropdown'
 import {
   ChevronDownIcon,
   QuestionMarkCircleIcon
 } from '@heroicons/react/24/outline'
-import Dropdown from '@/Components/Dropdown'
+import Popover from '../../../Components/Popover'
 
-export default function Form({ form }: { form: any }) {
+export default function Form({
+  form,
+  text
+}: {
+  form: any
+  text: string
+}) {
   const { data, setData, patch, errors, processing, recentlySuccessful } = form
-
-  const crud = [
-    { key: 'create', label: 'Agregar' },
-    { key: 'update', label: 'Editar' },
-    { key: 'read', label: 'Ver' },
-    { key: 'delete', label: 'Eliminar' }
-  ]
 
   const title =
     data.id !== null
@@ -41,14 +40,15 @@ export default function Form({ form }: { form: any }) {
     event.preventDefault()
 
     if (data.id !== null) {
-      patch(route('administration.roles.update', data.id), {
-        onSuccess: () => notification.success('Rol actualizado correctamente'),
-        onError: () => notification.error('Error al actualizar el rol')
+      patch(route('administration.providers.update', data.id), {
+        onSuccess: () =>
+          notification.success(`${text} actualizado correctamente`),
+        onError: () => notification.error(`Error al actualizar el ${text.toLocaleLowerCase()}`)
       })
     } else {
-      form.post(route('administration.roles.store'), {
-        onSuccess: () => notification.success('Rol creado correctamente'),
-        onError: () => notification.error('Error al crear el rol')
+      form.post(route('administration.providers.store'), {
+        onSuccess: () => notification.success(`${text} creado correctamente`),
+        onError: () => notification.error(`Error al crear el ${text.toLocaleLowerCase()}`)
       })
     }
   }
@@ -58,12 +58,11 @@ export default function Form({ form }: { form: any }) {
       <header className="flex justify-between">
         <div>
           <h2 className="text-lg font-medium text-gray-900">
-            Configuración del rol
+            Configuración de {text}
           </h2>
 
           <p className="mt-1 text-sm text-gray-600">
-            Modifica los detalles del rol, incluyendo nombre, descripción y
-            estatus.
+            Modifica los detalles del {text.toLocaleLowerCase()}, incluyendo nombre, correo electrónico y cedula o rif.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -78,8 +77,7 @@ export default function Form({ form }: { form: any }) {
             >
               <div className="px-4 py-2 text-sm text-gray-700">
                 <p className="text-xs">
-                  Si el rol esta activo, estará disponible para asignarse a los
-                  usuarios.
+                  Si el {text.toLocaleLowerCase()} está activo, podra asociarlo a transacciones y operaciones dentro del sistema.
                 </p>
               </div>
             </Popover>
@@ -129,8 +127,9 @@ export default function Form({ form }: { form: any }) {
         className="mt-6"
         onSubmit={handleSubmit}
       >
-        {/* Grid for main fields */}
+        {/* Grid for main fields: role, name, last name, email, passwords */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
           <div>
             <InputLabel
               htmlFor="name"
@@ -154,94 +153,105 @@ export default function Form({ form }: { form: any }) {
 
           <div>
             <InputLabel
-              htmlFor="description"
-              value="Descripción"
+              htmlFor="last_name"
+              value="Apellido"
             />
             <TextInput
               className="w-full"
-              id="description"
-              name="description"
-              defaultValue={data.description ? data.description : ''}
+              id="last_name"
+              name="lastname"
+              defaultValue={data.lastname ? data.lastname : ''}
               required
-              onChange={(event) => setData('description', event.target.value)}
-              autoComplete="description"
+              autoComplete="last_name"
+              onChange={(event) => setData('lastname', event.target.value)}
             />
             <InputError
               className="mt-2"
-              message={errors.description}
+              message={errors.lastname}
             />
           </div>
-        </div>
 
-        {/* Permissions Section */}
-        <div className="mt-6">
-          <h3 className="text-lg font-medium text-gray-900">Permisos</h3>
-          <div className="space-y-4">
-            {Menu.map((item) => (
-              <div
-                key={item.name}
-                className="bg-white shadow-sm rounded-lg p-4"
-              >
-                <div className="mb-3">
-                  <span className="text-sm font-semibold text-gray-800">
-                    {item.name}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3">
-                  {item.items.map((permission) => (
-                    <div
-                      key={permission.name}
-                      className="flex items-center justify-between p-2 border rounded"
-                    >
-                      <div className="flex items-center">
-                        <InputLabel
-                          htmlFor={permission.name}
-                          value={permission.name}
-                          className="mb-0"
-                        />
-                      </div>
-
-                      <div className="flex items-center space-x-4">
-                        {crud.map((action) => (
-                          <label
-                            key={action.key}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={`${permission.name}.${action.key}`}
-                              name={`permissions[${permission.name}][${action.key}]`}
-                              defaultChecked={
-                                data.permissions &&
-                                data.permissions[permission.name] &&
-                                data.permissions[permission.name][action.key]
-                                  ? true
-                                  : false
-                              }
-                              onChange={(event) => {
-                                setData('permissions', {
-                                  ...data.permissions,
-                                  [permission.name]: {
-                                    ...((data.permissions &&
-                                      data.permissions[permission.name]) ||
-                                      {}),
-                                    [action.key]: event.target.checked
-                                  }
-                                })
-                              }}
-                            />
-                            <span className="text-sm text-gray-700">
-                              {action.label}
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+          <div>
+            <InputLabel
+              htmlFor="email"
+              value="Correo electrónico"
+            />
+            <TextInput
+              className="w-full"
+              id="email"
+              name="email"
+              defaultValue={data.email ? data.email : ''}
+              required
+              autoComplete="email"
+              onChange={(event) => setData('email', event.target.value)}
+            />
+            <InputError
+              className="mt-2"
+              message={errors.email}
+            />
           </div>
+
+          <div>
+            <InputLabel
+              htmlFor="phone"
+              value="Teléfono"
+            />
+            <TextInput
+              className="w-full"
+              id="phone"
+              name="phone"
+              defaultValue={data.phone ? data.phone : ''}
+              required
+              autoComplete="phone"
+              onChange={(event) => setData('phone', event.target.value)}
+            />
+            <InputError
+              className="mt-2"
+              message={errors.phone}
+            />
+          </div>
+
+          <div>
+            <InputLabel
+              htmlFor="id_number"
+              value="Cedula o Rif"
+            />
+            <TextInput
+              className="w-full"
+              id="id_number"
+              name="id_number"
+              defaultValue={data.id_number ? data.id_number : ''}
+              required
+              autoComplete="id_number"
+              onChange={(event) => setData('id_number', event.target.value)}
+            />
+            <InputError
+              className="mt-2"
+              message={errors.id_number}
+            />
+          </div>
+
+          <div>
+            <InputLabel
+              htmlFor="address"
+              value="Dirección"
+            />
+            <TextInput
+              className="w-full"
+              id="address"
+              name="address"
+              defaultValue={data.address ? data.address : ''}
+              required
+              autoComplete="address"
+              onChange={(event) => setData('address', event.target.value)}
+            />
+            <InputError
+              className="mt-2"
+              message={errors.address}
+            />
+          </div>
+
+          
         </div>
 
         <div className="flex items-center gap-4 mt-6">

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->json('permissions')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_options')->default(true);
+            $table->boolean('is_system')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

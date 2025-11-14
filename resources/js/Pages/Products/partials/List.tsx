@@ -25,14 +25,14 @@ export default function List({ products = [] }: { products: any[] }) {
     { name: 'Creado Por', key: 'created_by' }
   ]
 
-  const deleteProduct = (productId: number) => {
+  const deleteData = (dataId: number) => {
     notification.confirm(
-      `¿Estás seguro de que deseas eliminar el producto ${productId}? Esta acción no se puede deshacer.`,
+      `¿Estás seguro de que deseas eliminar el producto ${dataId}? Esta acción no se puede deshacer.`,
       () => {
-        post(route('inventory.products.destroy', productId), {
+        post(route('inventory.products.destroy', dataId), {
           onSuccess: () =>
-            notification.success('Usuario eliminado correctamente'),
-          onError: () => notification.error('Error al eliminar el usuario')
+            notification.success('Producto eliminado correctamente'),
+          onError: () => notification.error('Error al eliminar el producto')
         })
       }
     )
@@ -44,18 +44,18 @@ export default function List({ products = [] }: { products: any[] }) {
    * @param role Role
    * @returns  React.ReactNode
    */
-  const renderActions = (product: any) => {
-    if (!product) return null
+  const renderActions = (data: any) => {
+    if (!data) return null
     return (
       <div className="flex space-x-4">
         <Link
-          href={route('inventory.products.edit', product.id)}
+          href={route('inventory.products.edit', data.id)}
           className="text-blue-600 hover:underline"
         >
           Editar
         </Link>
         <Link
-          onClick={() => deleteProduct(product.id)}
+          onClick={() => deleteData(data.id)}
           className="text-red-600 hover:underline"
         >
           Eliminar
@@ -65,26 +65,15 @@ export default function List({ products = [] }: { products: any[] }) {
   }
 
   return (
-    <div className="py-8">
+    <div className="py-4">
       <div className="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
       <div className="overflow-hidden shadow sm:rounded-lg">
-        <div className="flex justify-end p-3 bg-white border-b border-gray-200">
-          <Link
-            href={route('inventory.products.create')}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-[#F2731A]"
-          >
-            <PlusIcon
-              className="w-4 h-4 mr-2"
-              aria-hidden="true"
-            />
-            <span>Nuevo</span>
-          </Link>
-        </div>
         <div className="p-3 bg-white border-b border-gray-200">
           <Table
             headers={headers}
             data={products}
             renderActions={renderActions}
+            path={'inventory.products.create'}
           />
         </div>
       </div>
